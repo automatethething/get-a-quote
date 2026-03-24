@@ -11,7 +11,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   const { posted, matched } = await searchParams;
 
   const { data: requests } = await supabaseService
-    .from("quoteveil_requests")
+    .from("getaquote_requests")
     .select("*")
     .eq("user_id", session.user.id)
     .order("created_at", { ascending: false });

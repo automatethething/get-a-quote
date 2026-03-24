@@ -13,7 +13,7 @@ export default async function RequestsPage({ searchParams }: { searchParams: Pro
   const session = await auth();
 
   let query = supabaseService
-    .from("quoteveil_requests")
+    .from("getaquote_requests")
     .select("id,category,title,description,location_area,budget_hint,timeline,status,quote_count,expires_at,created_at")
     .eq("status", "open")
     .order("created_at", { ascending: false })
@@ -23,7 +23,7 @@ export default async function RequestsPage({ searchParams }: { searchParams: Pro
 
   const [{ data: requests }, { data: categoryRows }] = await Promise.all([
     query,
-    supabaseService.from("quoteveil_requests").select("category").eq("status", "open"),
+    supabaseService.from("getaquote_requests").select("category").eq("status", "open"),
   ]);
 
   const categories = availableOpenCategories(categoryRows || []);

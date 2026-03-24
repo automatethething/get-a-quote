@@ -15,14 +15,14 @@ export async function POST(req: NextRequest) {
   }
 
   // Upsert user record
-  await supabaseService.from("quoteveil_users").upsert({
+  await supabaseService.from("getaquote_users").upsert({
     id: session.user.id,
     name: session.user.name || "Anonymous",
     email: session.user.email || "",
     updated_at: new Date().toISOString(),
   });
 
-  const { data, error } = await supabaseService.from("quoteveil_requests").insert({
+  const { data, error } = await supabaseService.from("getaquote_requests").insert({
     user_id: session.user.id,
     category,
     title: title.trim(),
@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { data, error } = await supabaseService
-    .from("quoteveil_requests")
+    .from("getaquote_requests")
     .select("*")
     .eq("user_id", session.user.id)
     .order("created_at", { ascending: false });

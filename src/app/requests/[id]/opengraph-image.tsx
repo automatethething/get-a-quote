@@ -11,7 +11,7 @@ type Params = Promise<{ id: string }>;
 export default async function OGImage({ params }: { params: Params }) {
   const { id } = await params;
   const { data: request } = await supabaseService
-    .from("quoteveil_requests")
+    .from("getaquote_requests")
     .select("title,category,location_area")
     .eq("id", id)
     .single();
