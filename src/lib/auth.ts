@@ -6,19 +6,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       id: "consentkeys",
       name: "ConsentKeys",
       type: "oidc",
+      issuer: process.env.CONSENTKEYS_ISSUER ?? "https://api.consentkeys.com",
       clientId: process.env.CONSENTKEYS_CLIENT_ID!,
       clientSecret: process.env.CONSENTKEYS_CLIENT_SECRET!,
-      issuer: process.env.CONSENTKEYS_ISSUER || "https://api.consentkeys.com",
-      authorization: {
-        url: "https://api.consentkeys.com/auth",
-        params: { scope: "openid profile email" },
-      },
-      token: { url: "https://api.consentkeys.com/token" },
-      userinfo: "https://api.consentkeys.com/userinfo",
-      jwks_endpoint: "https://api.consentkeys.com/.well-known/jwks.json",
-      client: { token_endpoint_auth_method: "client_secret_post" },
+      authorization: { params: { scope: "openid profile email" } },
       profile(profile) {
-        return { id: profile.sub, name: profile.name, email: profile.email };
+        return {
+          id: profile.sub,
+          name: profile.name ?? profile.preferred_username ?? profile.sub,
+          email: profile.email,
+        };
       },
     },
   ],
