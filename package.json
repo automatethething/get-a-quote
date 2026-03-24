@@ -9,7 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@stripe/stripe-js": "latest",
     "@supabase/supabase-js": "^2.99.1",
     "@tailwindcss/postcss": "^4.2.2",
     "next": "16.1.6",
@@ -18,7 +17,6 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "resend": "latest",
-    "stripe": "latest",
     "tailwindcss": "^4.2.2"
   },
   "devDependencies": {

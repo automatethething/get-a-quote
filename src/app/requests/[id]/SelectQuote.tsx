@@ -10,7 +10,7 @@ export default function SelectQuote({ quoteId, requestId, vendorName, priceCents
   const total = priceCents;
 
   async function handleSelect() {
-    if (!confirm(`Select ${vendorName} for ${formatPrice(priceCents)}?\n\nA 15% platform fee (${formatPrice(commission)}) is included. You'll be taken to checkout. On payment, your contact info is shared with ${vendorName}.`)) return;
+    if (!confirm(`Select ${vendorName} for ${formatPrice(priceCents)}?\n\nIncludes 15% platform fee (${formatPrice(commission)}). You'll be taken to a secure checkout. On payment, your contact info is shared with ${vendorName} only.`)) return;
     setLoading(true);
     setError("");
     try {
