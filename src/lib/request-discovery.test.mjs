@@ -16,17 +16,17 @@ test('availableOpenCategories returns only categories present in open requests',
   assert.deepEqual(categories, ['Photography', 'Web Design / Dev']);
 });
 
-test('buildRequestShareText leads with title and includes location plus CTA', () => {
+test('buildRequestShareText leads with a social hook and request context', () => {
   const text = buildRequestShareText({
     title: 'Need landing page copy for SaaS launch',
     category: 'Writing / Copywriting',
     location_area: 'Remote / Online only',
   });
 
+  assert.match(text, /^Can you help or share this with someone who might be able to\?/);
   assert.match(text, /Need landing page copy for SaaS launch/);
-  assert.match(text, /Writing \/ Copywriting/);
-  assert.match(text, /Remote \/ Online only/);
-  assert.match(text, /Bid on this project in less than 3 minutes/);
+  assert.match(text, /Writing \/ Copywriting, Remote \/ Online only/);
+  assert.match(text, /Bid on this project in less than 3 minutes:/);
 });
 
 test('truncateDescription keeps short descriptions intact and trims long ones', () => {

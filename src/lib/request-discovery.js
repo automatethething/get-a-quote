@@ -9,5 +9,5 @@ export function truncateDescription(description, maxLength = 140) {
 }
 
 export function buildRequestShareText(request) {
-  return `${request.title} · ${request.category} · ${request.location_area} · Bid on this project in less than 3 minutes`;
+  return `Can you help or share this with someone who might be able to? ${request.title} (${request.category}, ${request.location_area}). Bid on this project in less than 3 minutes:`;
 }
