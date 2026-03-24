@@ -193,9 +193,6 @@ export default async function RequestPage({ params }: { params: Params }) {
 
         {!isOwner && request.status === "open" && (
           <div id="quote-form">
-            <h2 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "1rem" }}>
-              {hasQuoted ? "Your Quote" : isVendor ? "Submit a Quote" : "Become a Vendor to Quote"}
-            </h2>
             {hasQuoted ? (
               <div className="card">
                 <div className="alert alert-success" style={{ marginBottom: 0 }}>
@@ -203,19 +200,13 @@ export default async function RequestPage({ params }: { params: Params }) {
                 </div>
               </div>
             ) : isVendor ? (
-              <QuoteForm requestId={request.id} />
-            ) : session ? (
-              <div className="card">
-                <div className="alert alert-info" style={{ marginBottom: "1rem" }}>
-                  Create your vendor profile first, then you can bid immediately on this request.
-                </div>
-                <Link href={`/vendor/register?next=${encodeURIComponent(`/requests/${request.id}`)}`} className="btn btn-primary">
-                  Become a Vendor to Bid
-                </Link>
-              </div>
-            ) : (
-              <QuoteForm requestId={request.id} />
-            )}
+              <>
+                <h2 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "1rem" }}>
+                  Submit a Quote
+                </h2>
+                <QuoteForm requestId={request.id} />
+              </>
+            ) : null}
           </div>
         )}
 
