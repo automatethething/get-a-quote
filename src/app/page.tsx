@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AuthActionButton from "@/components/AuthActionButton";
 import { auth } from "@/lib/auth";
 
 export default async function Home() {
@@ -18,8 +19,8 @@ export default async function Home() {
             </>
           ) : (
             <>
-              <Link href="/login" className="btn btn-ghost">Sign In</Link>
-              <Link href="/post" className="btn btn-primary">Post a Request</Link>
+              <AuthActionButton callbackUrl="/dashboard" className="btn btn-ghost">Sign In</AuthActionButton>
+              <AuthActionButton callbackUrl="/post" className="btn btn-primary">Post a Request</AuthActionButton>
             </>
           )}
         </div>
@@ -38,9 +39,15 @@ export default async function Home() {
             Post what you need. Vendors compete. Your name, email, and phone stay hidden until you pick a quote and pay. No spam. No pressure.
           </p>
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/post" className="btn btn-primary" style={{ fontSize: "1.0625rem", padding: "0.875rem 2rem", background: "white", color: "#1e40af" }}>
-              Post a Request — It&apos;s Free
-            </Link>
+            {session ? (
+              <Link href="/post" className="btn btn-primary" style={{ fontSize: "1.0625rem", padding: "0.875rem 2rem", background: "white", color: "#1e40af" }}>
+                Post a Request — It&apos;s Free
+              </Link>
+            ) : (
+              <AuthActionButton callbackUrl="/post" className="btn btn-primary" style={{ fontSize: "1.0625rem", padding: "0.875rem 2rem", background: "white", color: "#1e40af" }}>
+                Post a Request — It&apos;s Free
+              </AuthActionButton>
+            )}
             <Link href="/requests" className="btn" style={{ fontSize: "1.0625rem", padding: "0.875rem 2rem", background: "rgba(255,255,255,0.15)", color: "white", border: "1.5px solid rgba(255,255,255,0.4)" }}>
               Browse Open Requests
             </Link>
@@ -95,9 +102,15 @@ export default async function Home() {
       <section style={{ padding: "5rem 1.5rem", background: "#1e40af", color: "white", textAlign: "center" }}>
         <h2 style={{ fontSize: "2rem", fontWeight: 800, margin: "0 0 1rem" }}>Ready to get competing quotes?</h2>
         <p style={{ opacity: 0.85, marginBottom: "2rem", fontSize: "1.125rem" }}>Free to post. Pay only when you pick a vendor.</p>
-        <Link href="/post" className="btn" style={{ background: "white", color: "#1e40af", fontSize: "1.0625rem", padding: "0.875rem 2.5rem" }}>
-          Post Your Request Now
-        </Link>
+        {session ? (
+          <Link href="/post" className="btn" style={{ background: "white", color: "#1e40af", fontSize: "1.0625rem", padding: "0.875rem 2.5rem" }}>
+            Post Your Request Now
+          </Link>
+        ) : (
+          <AuthActionButton callbackUrl="/post" className="btn" style={{ background: "white", color: "#1e40af", fontSize: "1.0625rem", padding: "0.875rem 2.5rem" }}>
+            Post Your Request Now
+          </AuthActionButton>
+        )}
       </section>
 
       {/* Footer */}

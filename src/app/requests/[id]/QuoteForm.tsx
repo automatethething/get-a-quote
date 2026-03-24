@@ -14,7 +14,7 @@ export default function QuoteForm({ requestId }: { requestId: string }) {
     return (
       <div className="card" style={{ textAlign: "center" }}>
         <p style={{ color: "#6b7280", marginBottom: "1rem" }}>Sign in as a vendor to submit a quote.</p>
-        <button className="btn btn-primary" onClick={() => signIn("consentkeys")}>Sign In to Quote</button>
+        <button className="btn btn-primary" onClick={() => signIn("consentkeys", { callbackUrl: `/requests/${requestId}` })}>Sign In to Quote</button>
       </div>
     );
   }

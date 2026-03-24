@@ -1,13 +1,17 @@
 import Link from "next/link";
+import AuthActionButton from "@/components/AuthActionButton";
+import { auth } from "@/lib/auth";
+import { availableOpenCategories } from "@/lib/request-discovery";
 import { supabaseService } from "@/lib/supabase-server";
-import { Request, CATEGORIES } from "@/lib/types";
+import { Request } from "@/lib/types";
 import Nav from "@/components/Nav";
 
 export const revalidate = 30;
 
 export default async function RequestsPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
   const { category } = await searchParams;
-  
+  const session = await auth();
+
   let query = supabaseService
     .from("quoteveil_requests")
     .select("id,category,title,description,location_area,budget_hint,timeline,status,quote_count,expires_at,created_at")
@@ -17,7 +21,12 @@ export default async function RequestsPage({ searchParams }: { searchParams: Pro
 
   if (category) query = query.eq("category", category);
 
-  const { data: requests } = await query;
+  const [{ data: requests }, { data: categoryRows }] = await Promise.all([
+    query,
+    supabaseService.from("quoteveil_requests").select("category").eq("status", "open"),
+  ]);
+
+  const categories = availableOpenCategories(categoryRows || []);
 
   return (
     <div>
@@ -36,7 +45,7 @@ export default async function RequestsPage({ searchParams }: { searchParams: Pro
           <Link href="/requests" className={`badge ${!category ? "badge-matched" : ""}`} style={{ padding: "0.4rem 1rem", textDecoration: "none", background: !category ? "#dbeafe" : "#f3f4f6", color: !category ? "#1e40af" : "#6b7280", cursor: "pointer" }}>
             All
           </Link>
-          {CATEGORIES.slice(0, 10).map(c => (
+          {categories.map(c => (
             <Link key={c} href={`/requests?category=${encodeURIComponent(c)}`}
               className="badge"
               style={{ padding: "0.4rem 1rem", textDecoration: "none", background: category === c ? "#dbeafe" : "#f3f4f6", color: category === c ? "#1e40af" : "#6b7280", cursor: "pointer" }}>
@@ -49,7 +58,13 @@ export default async function RequestsPage({ searchParams }: { searchParams: Pro
           <div className="empty">
             <h3>No open requests {category ? `in ${category}` : "yet"}</h3>
             <p>Be the first! Post your service request and let vendors compete.</p>
-            <Link href="/post" className="btn btn-primary" style={{ marginTop: "1rem" }}>Post a Request</Link>
+            {session ? (
+              <Link href="/post" className="btn btn-primary" style={{ marginTop: "1rem" }}>Post a Request</Link>
+            ) : (
+              <AuthActionButton callbackUrl="/post" className="btn btn-primary" style={{ marginTop: "1rem" }}>
+                Post a Request
+              </AuthActionButton>
+            )}
           </div>
         ) : (
           <div className="grid-cards">

@@ -1,43 +1,94 @@
+import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
+import { buildRequestShareText, truncateDescription } from "@/lib/request-discovery";
 import { supabaseService } from "@/lib/supabase-server";
 import { Request, Quote, Vendor, formatPrice } from "@/lib/types";
 import Nav from "@/components/Nav";
+import AuthActionButton from "@/components/AuthActionButton";
+import RequestShareButtons from "@/components/RequestShareButtons";
 import QuoteForm from "./QuoteForm";
 import SelectQuote from "./SelectQuote";
 
-export default async function RequestPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const session = await auth();
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://quoteveil.com";
 
-  const { data: req } = await supabaseService
+type Params = Promise<{ id: string }>;
+
+async function getRequestOrNull(id: string) {
+  const { data } = await supabaseService
     .from("quoteveil_requests")
     .select("*")
     .eq("id", id)
     .single();
 
-  if (!req) notFound();
+  return data as Request | null;
+}
 
-  const { data: quotes } = await supabaseService
-    .from("quoteveil_quotes")
-    .select("*, vendor:quoteveil_vendors(business_name,category,description,location_area,verified)")
-    .eq("request_id", id)
-    .order("created_at", { ascending: true });
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const { id } = await params;
+  const request = await getRequestOrNull(id);
 
-  const isOwner = session?.user?.id === (req as Request).user_id;
-  const isVendor = !isOwner; // simplistic — we'll check vendor profile in the form
+  if (!request) {
+    return {
+      title: "Request not found | QuoteVeil",
+    };
+  }
+
+  const title = `${request.title} | QuoteVeil`;
+  const description = `${request.category} · ${request.location_area} · ${truncateDescription(request.description, 140)} · Bid on this project in less than 3 minutes.`;
+  const url = `${appUrl}/requests/${request.id}`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "article",
+      images: [{ url: `/requests/${request.id}/opengraph-image`, width: 1200, height: 630, alt: request.title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [`/requests/${request.id}/twitter-image`],
+    },
+  };
+}
+
+export default async function RequestPage({ params }: { params: Params }) {
+  const { id } = await params;
+  const session = await auth();
+
+  const request = await getRequestOrNull(id);
+  if (!request) notFound();
+
+  const [{ data: quotes }, { data: vendorProfile }] = await Promise.all([
+    supabaseService
+      .from("quoteveil_quotes")
+      .select("*, vendor:quoteveil_vendors(business_name,category,description,location_area,verified)")
+      .eq("request_id", id)
+      .order("created_at", { ascending: true }),
+    session?.user?.id
+      ? supabaseService.from("quoteveil_vendors").select("id").eq("id", session.user.id).maybeSingle()
+      : Promise.resolve({ data: null }),
+  ]);
+
+  const isOwner = session?.user?.id === request.user_id;
+  const isVendor = Boolean(vendorProfile?.id);
   const hasQuoted = quotes?.some((q: Quote) => q.vendor_id === session?.user?.id);
-
-  const request = req as Request;
+  const requestUrl = `${appUrl}/requests/${request.id}`;
+  const shareText = buildRequestShareText(request);
 
   return (
     <div>
       <Nav />
       <div className="page" style={{ maxWidth: 820 }}>
-
-        {/* Request details */}
-        <div className="card" style={{ marginBottom: "1.5rem" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem", flexWrap: "wrap", gap: "0.5rem" }}>
+        <div className="card" style={{ marginBottom: "1rem" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem", flexWrap: "wrap", gap: "0.75rem" }}>
             <div>
               <span className="badge" style={{ background: "#eff6ff", color: "#1e40af", marginBottom: "0.5rem", display: "inline-block" }}>{request.category}</span>
               <h1 style={{ fontSize: "1.5rem", fontWeight: 800, margin: "0 0 0.25rem" }}>{request.title}</h1>
@@ -55,6 +106,10 @@ export default async function RequestPage({ params }: { params: Promise<{ id: st
             <span>📅 Posted {new Date(request.created_at).toLocaleDateString()}</span>
           </div>
 
+          <div style={{ marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid #f3f4f6" }}>
+            <RequestShareButtons url={requestUrl} title={request.title} shareText={shareText} />
+          </div>
+
           {isOwner && (
             <div className="alert alert-info" style={{ marginTop: "1rem", marginBottom: 0 }}>
               🔒 You are the requester. Vendors cannot see your identity until you select a quote and pay.
@@ -62,7 +117,38 @@ export default async function RequestPage({ params }: { params: Promise<{ id: st
           )}
         </div>
 
-        {/* Quotes section */}
+        {!isOwner && request.status === "open" && (
+          <div className="card" style={{ marginBottom: "1.5rem", background: "#eff6ff", borderColor: "#bfdbfe" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
+              <div>
+                <div style={{ fontSize: "1.125rem", fontWeight: 800, marginBottom: "0.25rem" }}>
+                  Bid on this project in less than 3 minutes
+                </div>
+                <div style={{ color: "#4b5563", fontSize: "0.9375rem" }}>
+                  Get in front of a motivated buyer. You only pay if they choose you.
+                </div>
+              </div>
+              {!session ? (
+                <AuthActionButton callbackUrl={`/requests/${request.id}`} className="btn btn-primary" style={{ whiteSpace: "nowrap" }}>
+                  Bid on this project
+                </AuthActionButton>
+              ) : hasQuoted ? (
+                <Link href="/vendor/dashboard" className="btn btn-primary" style={{ whiteSpace: "nowrap" }}>
+                  View your quote
+                </Link>
+              ) : isVendor ? (
+                <a href="#quote-form" className="btn btn-primary" style={{ whiteSpace: "nowrap" }}>
+                  Submit your quote
+                </a>
+              ) : (
+                <Link href={`/vendor/register?next=${encodeURIComponent(`/requests/${request.id}`)}`} className="btn btn-primary" style={{ whiteSpace: "nowrap" }}>
+                  Become a vendor to bid
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
+
         {isOwner && (
           <div>
             <h2 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "1rem" }}>
@@ -105,17 +191,27 @@ export default async function RequestPage({ params }: { params: Promise<{ id: st
           </div>
         )}
 
-        {/* Vendor quote form */}
         {!isOwner && request.status === "open" && (
-          <div>
+          <div id="quote-form">
             <h2 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "1rem" }}>
-              {hasQuoted ? "Your Quote" : "Submit a Quote"}
+              {hasQuoted ? "Your Quote" : isVendor ? "Submit a Quote" : "Become a Vendor to Quote"}
             </h2>
             {hasQuoted ? (
               <div className="card">
                 <div className="alert alert-success" style={{ marginBottom: 0 }}>
                   ✓ You have already submitted a quote on this request. The requester will be in touch if they choose you.
                 </div>
+              </div>
+            ) : isVendor ? (
+              <QuoteForm requestId={request.id} />
+            ) : session ? (
+              <div className="card">
+                <div className="alert alert-info" style={{ marginBottom: "1rem" }}>
+                  Create your vendor profile first, then you can bid immediately on this request.
+                </div>
+                <Link href={`/vendor/register?next=${encodeURIComponent(`/requests/${request.id}`)}`} className="btn btn-primary">
+                  Become a Vendor to Bid
+                </Link>
               </div>
             ) : (
               <QuoteForm requestId={request.id} />

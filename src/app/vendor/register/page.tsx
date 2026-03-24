@@ -8,12 +8,14 @@ import Nav from "@/components/Nav";
 export default function VendorRegisterPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [nextPath, setNextPath] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [existing, setExisting] = useState<boolean | null>(null);
   const [form, setForm] = useState({ business_name: "", category: "", description: "", contact_email: "", contact_phone: "", location_area: "" });
 
   useEffect(() => {
+    setNextPath(new URLSearchParams(window.location.search).get("next"));
     if (session?.user?.email) setForm(f => ({ ...f, contact_email: session.user?.email || "" }));
     if (session?.user?.id) {
       fetch("/api/vendor").then(r => r.json()).then(d => {
@@ -31,7 +33,7 @@ export default function VendorRegisterPage() {
         <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🏪</div>
         <h1 className="page-title">Become a Vendor</h1>
         <p style={{ color: "#6b7280", marginBottom: "2rem" }}>Create a vendor profile to browse requests and submit quotes. You only pay when you win.</p>
-        <button className="btn btn-primary" style={{ fontSize: "1rem", padding: "0.75rem 2rem" }} onClick={() => signIn("consentkeys", { callbackUrl: "/vendor/register" })}>Sign In to Continue</button>
+        <button className="btn btn-primary" style={{ fontSize: "1rem", padding: "0.75rem 2rem" }} onClick={() => signIn("consentkeys", { callbackUrl: nextPath ? `/vendor/register?next=${encodeURIComponent(nextPath)}` : "/vendor/register" })}>Sign In to Continue</button>
       </div>
     </div>
   );
@@ -43,7 +45,7 @@ export default function VendorRegisterPage() {
       const res = await fetch("/api/vendor", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to save vendor profile");
-      router.push("/vendor/dashboard?registered=true");
+      router.push(nextPath || "/vendor/dashboard?registered=true");
     } catch (err: unknown) { setError(err instanceof Error ? err.message : "Something went wrong"); }
     finally { setLoading(false); }
   }

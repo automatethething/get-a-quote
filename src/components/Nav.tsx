@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
+import AuthActionButton from "@/components/AuthActionButton";
 
 export default function Nav() {
   const { data: session } = useSession();
@@ -20,8 +21,12 @@ export default function Nav() {
         ) : (
           <>
             <Link href="/vendor/register" className="btn btn-ghost" style={{ fontSize: "0.9rem" }}>Become a Vendor</Link>
-            <Link href="/login" className="btn btn-outline" style={{ fontSize: "0.9rem" }}>Sign In</Link>
-            <Link href="/post" className="btn btn-primary" style={{ fontSize: "0.9rem" }}>Post a Request</Link>
+            <AuthActionButton callbackUrl="/dashboard" className="btn btn-outline" style={{ fontSize: "0.9rem" }}>
+              Sign In
+            </AuthActionButton>
+            <AuthActionButton callbackUrl="/post" className="btn btn-primary" style={{ fontSize: "0.9rem" }}>
+              Post a Request
+            </AuthActionButton>
           </>
         )}
       </div>
