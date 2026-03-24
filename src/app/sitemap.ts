@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://getaquote.app";
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://quoteveil.app";
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: appUrl, lastModified: new Date(), changeFrequency: "daily", priority: 1 },

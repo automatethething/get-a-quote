@@ -5,7 +5,7 @@ import { supabaseService } from "@/lib/supabase-server";
 export async function GET() {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { data } = await supabaseService.from("getaquote_vendors").select("*").eq("id", session.user.id).single();
+  const { data } = await supabaseService.from("quoteveil_vendors").select("*").eq("id", session.user.id).single();
   return NextResponse.json(data || null);
 }
 
@@ -18,14 +18,14 @@ export async function POST(req: NextRequest) {
   if (!business_name || !category || !contact_email) return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
 
   // Upsert user record first
-  await supabaseService.from("getaquote_users").upsert({
+  await supabaseService.from("quoteveil_users").upsert({
     id: session.user.id,
     name: session.user.name || "User",
     email: session.user.email || contact_email,
     updated_at: new Date().toISOString(),
   });
 
-  const { data, error } = await supabaseService.from("getaquote_vendors").upsert({
+  const { data, error } = await supabaseService.from("quoteveil_vendors").upsert({
     id: session.user.id,
     business_name: business_name.trim(),
     category,

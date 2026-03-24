@@ -9,7 +9,7 @@ export default async function RequestsPage({ searchParams }: { searchParams: Pro
   const { category } = await searchParams;
   
   let query = supabaseService
-    .from("getaquote_requests")
+    .from("quoteveil_requests")
     .select("id,category,title,description,location_area,budget_hint,timeline,status,quote_count,expires_at,created_at")
     .eq("status", "open")
     .order("created_at", { ascending: false })

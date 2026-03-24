@@ -6,7 +6,7 @@ export default function LoginPage() {
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc" }}>
       <div className="card" style={{ maxWidth: 420, width: "100%", textAlign: "center" }}>
         <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>🔑</div>
-        <h1 style={{ fontSize: "1.5rem", fontWeight: 800, margin: "0 0 0.5rem" }}>Sign in to GetAQuote</h1>
+        <h1 style={{ fontSize: "1.5rem", fontWeight: 800, margin: "0 0 0.5rem" }}>Sign in to QuoteVeil</h1>
         <p style={{ color: "#6b7280", marginBottom: "2rem", fontSize: "0.9375rem" }}>Post requests, track quotes, and manage your account.</p>
         <button
           className="btn btn-primary"

@@ -2,22 +2,22 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "@/components/Providers";
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://getaquote.app";
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://quoteveil.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
-  title: { default: "Get a Quote", template: "%s | Get a Quote" },
+  title: { default: "QuoteVeil", template: "%s | QuoteVeil" },
   description: "Post what you need. Vendors compete. Your identity stays private until you choose who to hire.",
-  applicationName: "Get a Quote",
+  applicationName: "QuoteVeil",
   alternates: { canonical: "/" },
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     url: appUrl,
-    siteName: "Get a Quote",
+    siteName: "QuoteVeil",
     title: "Get competing quotes — without giving out your number",
     description: "Post what you need. Vendors compete. Your identity stays private until you choose who to hire.",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Get a Quote" }],
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "QuoteVeil" }],
   },
   twitter: {
     card: "summary_large_image",

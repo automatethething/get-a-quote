@@ -11,7 +11,7 @@ export default async function RequestPage({ params }: { params: Promise<{ id: st
   const session = await auth();
 
   const { data: req } = await supabaseService
-    .from("getaquote_requests")
+    .from("quoteveil_requests")
     .select("*")
     .eq("id", id)
     .single();
@@ -19,8 +19,8 @@ export default async function RequestPage({ params }: { params: Promise<{ id: st
   if (!req) notFound();
 
   const { data: quotes } = await supabaseService
-    .from("getaquote_quotes")
-    .select("*, vendor:getaquote_vendors(business_name,category,description,location_area,verified)")
+    .from("quoteveil_quotes")
+    .select("*, vendor:quoteveil_vendors(business_name,category,description,location_area,verified)")
     .eq("request_id", id)
     .order("created_at", { ascending: true });
 

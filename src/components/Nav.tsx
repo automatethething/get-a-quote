@@ -7,7 +7,7 @@ export default function Nav() {
 
   return (
     <nav className="nav">
-      <Link href="/" className="nav-logo">GetAQuote</Link>
+      <Link href="/" className="nav-logo">QuoteVeil</Link>
       <div className="nav-links">
         <Link href="/requests" className="btn btn-ghost" style={{ fontSize: "0.9rem" }}>Browse Requests</Link>
         {session ? (

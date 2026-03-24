@@ -16,10 +16,10 @@ export default function Privacy() {
         <p>Quote requests are posted publicly but anonymously. Vendors see your request details but not your name, email, or phone number until you pay and choose them.</p>
 
         <h2>Data retention</h2>
-        <p>We retain your data while your account is active. You can request deletion by emailing <a href="mailto:support@getaquote.app">support@getaquote.app</a>.</p>
+        <p>We retain your data while your account is active. You can request deletion by emailing <a href="mailto:support@quoteveil.app">support@quoteveil.app</a>.</p>
 
         <h2>Contact</h2>
-        <p>Questions: <a href="mailto:support@getaquote.app">support@getaquote.app</a></p>
+        <p>Questions: <a href="mailto:support@quoteveil.app">support@quoteveil.app</a></p>
       </div>
     </div>
   );

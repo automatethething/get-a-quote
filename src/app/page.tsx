@@ -8,7 +8,7 @@ export default async function Home() {
     <div>
       {/* Nav */}
       <nav className="nav">
-        <a href="/" className="nav-logo">GetAQuote</a>
+        <a href="/" className="nav-logo">QuoteVeil</a>
         <div className="nav-links">
           <Link href="/requests" className="btn btn-ghost">Browse Requests</Link>
           {session ? (
@@ -82,7 +82,7 @@ export default async function Home() {
               ))}
             </div>
             <div className="card" style={{ borderColor: "#bbf7d0" }}>
-              <div style={{ fontWeight: 700, color: "#166534", marginBottom: "1rem" }}>✅ GetAQuote</div>
+              <div style={{ fontWeight: 700, color: "#166534", marginBottom: "1rem" }}>✅ QuoteVeil</div>
               {["Identity hidden until you choose", "Zero spam — vendors can't contact you until you pay", "Vendors only pay when they win", "You stay in control"].map(t => (
                 <div key={t} style={{ color: "#6b7280", fontSize: "0.9rem", marginBottom: "0.5rem" }}>• {t}</div>
               ))}
@@ -108,7 +108,7 @@ export default async function Home() {
           <Link href="/requests" style={{ color: "#9ca3af", textDecoration: "none" }}>Browse Requests</Link>
           <Link href="/vendor/register" style={{ color: "#9ca3af", textDecoration: "none" }}>Become a Vendor</Link>
         </div>
-        © {new Date().getFullYear()} GetAQuote. Commission charged at match time.
+        © {new Date().getFullYear()} QuoteVeil. Commission charged at match time.
       </footer>
     </div>
   );
