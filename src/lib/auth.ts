@@ -13,7 +13,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       issuer: ckIssuer,
       clientId: ckClientId!,
       clientSecret: ckClientSecret!,
-      authorization: { params: { scope: "openid profile email" } },
+      authorization: {
+        url: `${ckIssuer}/auth`,
+        params: { scope: "openid profile email" },
+      },
+      token: {
+        url: `${ckIssuer}/token`,
+        params: { grant_type: "authorization_code" },
+      },
+      userinfo: `${ckIssuer}/userinfo`,
+      jwks_endpoint: `${ckIssuer}/.well-known/jwks.json`,
+      client: { token_endpoint_auth_method: "client_secret_post" },
       profile(profile) {
         return {
           id: profile.sub,
