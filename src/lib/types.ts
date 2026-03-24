@@ -12,8 +12,11 @@ export const CATEGORIES = [
   "Photography",
   "Web Design / Dev",
   "Graphic Design",
+  "Social Media / Marketing",
   "Writing / Copywriting",
   "Accounting / Bookkeeping",
+  "AI, Agents and Automation",
+  "Online / Digital Services",
   "Legal Services",
   "Other",
 ] as const;
