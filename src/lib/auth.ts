@@ -1,14 +1,18 @@
 import NextAuth from "next-auth";
 
+const ckIssuer = (process.env.CONSENTKEYS_ISSUER ?? "https://api.consentkeys.com").trim();
+const ckClientId = process.env.CONSENTKEYS_CLIENT_ID?.trim();
+const ckClientSecret = process.env.CONSENTKEYS_CLIENT_SECRET?.trim();
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     {
       id: "consentkeys",
       name: "ConsentKeys",
       type: "oidc",
-      issuer: process.env.CONSENTKEYS_ISSUER ?? "https://api.consentkeys.com",
-      clientId: process.env.CONSENTKEYS_CLIENT_ID!,
-      clientSecret: process.env.CONSENTKEYS_CLIENT_SECRET!,
+      issuer: ckIssuer,
+      clientId: ckClientId!,
+      clientSecret: ckClientSecret!,
       authorization: { params: { scope: "openid profile email" } },
       profile(profile) {
         return {
