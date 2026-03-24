@@ -105,16 +105,15 @@ export default function PostRequestPage() {
             </div>
 
             <div className="form-group">
-              <label>General Location *</label>
+              <label>General Location</label>
               <input
                 type="text"
                 placeholder="e.g. Downtown Montreal, West Island, Ottawa area"
                 value={form.location_area}
                 onChange={e => set("location_area", e.target.value)}
-                required
               />
               <p style={{ fontSize: "0.8125rem", color: "#6b7280", marginTop: "0.35rem" }}>
-                General area only — your exact address stays private.
+                General area only — your exact address stays private. Leave blank for Remote / Online only.
               </p>
             </div>
 

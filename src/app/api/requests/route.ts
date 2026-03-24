@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { normalizeLocationArea } from "@/lib/request-location";
 import { supabaseService } from "@/lib/supabase-server";
 
 export async function POST(req: NextRequest) {
@@ -9,7 +10,7 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const { category, title, description, location_area, budget_hint, timeline } = body;
 
-  if (!category || !title || !description || !location_area) {
+  if (!category || !title || !description) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
     category,
     title: title.trim(),
     description: description.trim(),
-    location_area: location_area.trim(),
+    location_area: normalizeLocationArea(location_area),
     budget_hint: budget_hint?.trim() || null,
     timeline: timeline?.trim() || null,
   }).select("id").single();
