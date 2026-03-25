@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
   // Idempotency: skip if already processed
   const { data: existing } = await supabaseService
-    .from("getaquote_matches")
+    .from("quoteveil_matches")
     .select("id,payment_status")
     .eq("vendor_tx_id", payload.vendor_tx_id)
     .single();
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 
     // Get match details for disclosure
     const { data: match } = await supabaseService
-      .from("getaquote_matches")
+      .from("quoteveil_matches")
       .select("*")
       .eq("vendor_tx_id", payload.vendor_tx_id)
       .single();
@@ -34,21 +34,21 @@ export async function POST(req: NextRequest) {
 
     // Fetch user (for identity disclosure) and vendor (for email)
     const [{ data: user }, { data: vendor }, { data: request }] = await Promise.all([
-      supabaseService.from("getaquote_users").select("name,email,phone").eq("id", match.user_id).single(),
-      supabaseService.from("getaquote_vendors").select("contact_email,business_name").eq("id", match.vendor_id).single(),
-      supabaseService.from("getaquote_requests").select("title,location_area").eq("id", match.request_id).single(),
+      supabaseService.from("quoteveil_users").select("name,email,phone").eq("id", match.user_id).single(),
+      supabaseService.from("quoteveil_vendors").select("contact_email,business_name").eq("id", match.vendor_id).single(),
+      supabaseService.from("quoteveil_requests").select("title,location_area").eq("id", match.request_id).single(),
     ]);
 
     // Mark paid and disclose identity
-    await supabaseService.from("getaquote_matches").update({
+    await supabaseService.from("quoteveil_matches").update({
       payment_status: "paid",
       entitlement_token: payload.entitlement_token,
       identity_disclosed_at: new Date().toISOString(),
     }).eq("vendor_tx_id", payload.vendor_tx_id);
 
     // Mark request as matched, reject other quotes
-    await supabaseService.from("getaquote_requests").update({ status: "matched" }).eq("id", match.request_id);
-    await supabaseService.from("getaquote_quotes")
+    await supabaseService.from("quoteveil_requests").update({ status: "matched" }).eq("id", match.request_id);
+    await supabaseService.from("quoteveil_quotes")
       .update({ status: "rejected" })
       .eq("request_id", match.request_id)
       .neq("id", match.quote_id);
@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (payload.event === "payment.refunded") {
-    await supabaseService.from("getaquote_matches").update({ payment_status: "refunded" })
+    await supabaseService.from("quoteveil_matches").update({ payment_status: "refunded" })
       .eq("vendor_tx_id", payload.vendor_tx_id);
   }
 

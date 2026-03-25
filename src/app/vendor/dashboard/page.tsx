@@ -10,13 +10,13 @@ export default async function VendorDashboard({ searchParams }: { searchParams: 
   if (!session?.user?.id) redirect("/login");
   const { registered } = await searchParams;
 
-  const { data: vendor } = await supabaseService.from("getaquote_vendors").select("*").eq("id", session.user.id).single();
+  const { data: vendor } = await supabaseService.from("quoteveil_vendors").select("*").eq("id", session.user.id).single();
 
   if (!vendor) redirect("/vendor/register");
 
   const { data: quotes } = await supabaseService
-    .from("getaquote_quotes")
-    .select("*, request:getaquote_requests(id,title,category,location_area,status,budget_hint)")
+    .from("quoteveil_quotes")
+    .select("*, request:quoteveil_requests(id,title,category,location_area,status,budget_hint)")
     .eq("vendor_id", session.user.id)
     .order("created_at", { ascending: false });
 

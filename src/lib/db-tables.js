@@ -1,7 +1,7 @@
 export const TABLES = {
-  users: 'getaquote_users',
-  vendors: 'getaquote_vendors',
-  requests: 'getaquote_requests',
-  quotes: 'getaquote_quotes',
-  matches: 'getaquote_matches',
+  users: 'quoteveil_users',
+  vendors: 'quoteveil_vendors',
+  requests: 'quoteveil_requests',
+  quotes: 'quoteveil_quotes',
+  matches: 'quoteveil_matches',
 };

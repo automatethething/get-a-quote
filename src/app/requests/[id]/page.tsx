@@ -17,7 +17,7 @@ type Params = Promise<{ id: string }>;
 
 async function getRequestOrNull(id: string) {
   const { data } = await supabaseService
-    .from("getaquote_requests")
+    .from("quoteveil_requests")
     .select("*")
     .eq("id", id)
     .single();
@@ -68,12 +68,12 @@ export default async function RequestPage({ params }: { params: Params }) {
 
   const [{ data: quotes }, { data: vendorProfile }] = await Promise.all([
     supabaseService
-      .from("getaquote_quotes")
-      .select("*, vendor:getaquote_vendors(business_name,category,description,location_area,verified)")
+      .from("quoteveil_quotes")
+      .select("*, vendor:quoteveil_vendors(business_name,category,description,location_area,verified)")
       .eq("request_id", id)
       .order("created_at", { ascending: true }),
     session?.user?.id
-      ? supabaseService.from("getaquote_vendors").select("id").eq("id", session.user.id).maybeSingle()
+      ? supabaseService.from("quoteveil_vendors").select("id").eq("id", session.user.id).maybeSingle()
       : Promise.resolve({ data: null }),
   ]);
 

@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
   // Verify the user owns this request
   const { data: request } = await supabaseService
-    .from("getaquote_requests")
+    .from("quoteveil_requests")
     .select("user_id,title,status")
     .eq("id", request_id)
     .single();
@@ -26,8 +26,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Request already matched" }, { status: 400 });
 
   const { data: quote } = await supabaseService
-    .from("getaquote_quotes")
-    .select("*, vendor:getaquote_vendors(business_name,contact_email)")
+    .from("quoteveil_quotes")
+    .select("*, vendor:quoteveil_vendors(business_name,contact_email)")
     .eq("id", quote_id)
     .eq("request_id", request_id)
     .single();
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
 
   // Persist match before calling PayRails
   const { data: match, error: matchErr } = await supabaseService
-    .from("getaquote_matches")
+    .from("quoteveil_matches")
     .insert({
       request_id,
       quote_id,
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
   if (matchErr) return NextResponse.json({ error: matchErr.message }, { status: 500 });
 
   // Mark quote as selected optimistically
-  await supabaseService.from("getaquote_quotes").update({ status: "selected" }).eq("id", quote_id);
+  await supabaseService.from("quoteveil_quotes").update({ status: "selected" }).eq("id", quote_id);
 
   try {
     const checkoutUrl = await createCheckout(
@@ -70,8 +70,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ url: checkoutUrl });
   } catch (err) {
     // Roll back optimistic quote status on PayRails failure
-    await supabaseService.from("getaquote_quotes").update({ status: "pending" }).eq("id", quote_id);
-    await supabaseService.from("getaquote_matches").delete().eq("id", match.id);
+    await supabaseService.from("quoteveil_quotes").update({ status: "pending" }).eq("id", quote_id);
+    await supabaseService.from("quoteveil_matches").delete().eq("id", match.id);
     return NextResponse.json({ error: err instanceof Error ? err.message : "Payment init failed" }, { status: 500 });
   }
 }
