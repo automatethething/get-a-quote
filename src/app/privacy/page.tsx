@@ -7,7 +7,7 @@ export default function Privacy() {
         <p style={{ color: "#6b7280" }}>Last updated: {new Date().toLocaleDateString()}</p>
 
         <h2>What we collect</h2>
-        <p>We collect your name and email via ConsentKeys authentication. We collect the content of quote requests and quotes you submit. We store payment records via Stripe (we never see your card details).</p>
+        <p>We collect your pseudonymous ConsentKeys identity fields, the content of quote requests and quotes you submit, and payment records via Petrichor Labs PayRails (we never see your card details).</p>
 
         <h2>How we use it</h2>
         <p>We use your information to operate the marketplace. Your contact details are only shared with a vendor <strong>after you select their quote and complete payment</strong>. We do not sell your data to advertisers.</p>
@@ -17,6 +17,9 @@ export default function Privacy() {
 
         <h2>Data retention</h2>
         <p>We retain your data while your account is active. You can request deletion by emailing <a href="mailto:support@quoteveil.app">support@quoteveil.app</a>.</p>
+
+        <h2>Analytics</h2>
+        <p>We use self-hosted PostHog analytics through logs.petrichorlabs.ca to understand where buyers and vendors drop off, which quote flows convert, and how to improve trust and clarity in the marketplace. We use this for internal product improvement only, not for advertising.</p>
 
         <h2>Contact</h2>
         <p>Questions: <a href="mailto:support@quoteveil.app">support@quoteveil.app</a></p>
